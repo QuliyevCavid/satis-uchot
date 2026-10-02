@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="az"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Satış, Xərc və Gəlir Uçotu</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f3f2f7;--card:#fff;--tx:#1e1a2b;--mu:#6c6880;--bd:#e0dde9;--ac:#5b2a6e;--go:#b8892f;--ok:#2f855a;--bad:#c53030;--in:#faf9fc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15121d;--card:#1f1b2b;--tx:#ece9f5;--mu:#9b97b0;--bd:#332e44;--ac:#c79be0;--go:#e0b45a;--ok:#5fc08a;--bad:#f08080;--in:#272235}}
+:root[data-theme="dark"]{--bg:#15121d;--card:#1f1b2b;--tx:#ece9f5;--mu:#9b97b0;--bd:#332e44;--ac:#c79be0;--go:#e0b45a;--ok:#5fc08a;--bad:#f08080;--in:#272235}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:18px 16px 0;max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{font:600 24px/1.1 Georgia,"Times New Roman",serif;margin:0;color:var(--ac)}
+h2{font:600 16px Georgia,serif;margin:0 0 10px}
+.yr{display:flex;align-items:center;gap:8px;color:var(--mu)}
+.yr input{width:84px}
+nav{max-width:1100px;margin:14px auto 0;padding:0 16px;display:flex;gap:6px;overflow-x:auto}
+nav button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:9px 14px;border-radius:8px;font:inherit;cursor:pointer;white-space:nowrap}
+nav button.on{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600}
+main{max-width:1100px;margin:14px auto 40px;padding:0 16px}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:14px}
+input,select,textarea{font:inherit;color:var(--tx);background:var(--in);border:1px solid var(--bd);border-radius:6px;padding:7px 8px;min-width:0;max-width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.add{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+.add label{display:flex;flex-direction:column;gap:3px;color:var(--mu);font-size:12px}
+.btn{background:var(--ac);color:var(--bg);border:0;border-radius:6px;padding:9px 16px;font:inherit;font-weight:600;cursor:pointer}
+.x{background:none;border:0;color:var(--bad);cursor:pointer;font-size:16px;padding:4px 8px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th{text-align:left;font-weight:600;color:var(--mu);font-size:12px;padding:6px;border-bottom:2px solid var(--bd)}
+td{padding:4px 6px;border-bottom:1px solid var(--bd)}
+td input,td select{width:100%}
+td.n,th.n{text-align:right}
+tfoot td{font-weight:700;border-bottom:0}
+.mu{color:var(--mu)}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kp div{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:12px}
+.kp small{color:var(--mu);display:block}
+.kp b{font:600 20px Georgia,serif}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.ch{position:relative;height:260px}
+dl{display:grid;grid-template-columns:1fr auto;gap:6px 14px;margin:0}dt{color:var(--mu)}dd{margin:0;font-weight:600;text-align:right}
+textarea{width:100%;height:90px;font-size:12px}
+.pr{display:flex;gap:8px;margin-bottom:6px}.pr input:first-child{flex:1}.pr input:nth-child(2){width:110px}
+</style></head><body>
+<header><h1>Satış, Xərc və Gəlir Uçotu</h1>
+<label class="yr">İl <input type="number" id="yr" min="2000" max="2100"></label></header>
+<nav id="nav"></nav>
+<main>
+<section id="s-sales">
+ <div class="card"><h2>Yeni satış</h2><div class="add">
+  <label>Tarix<input type="date" id="a-d"></label>
+  <label>Ətrin adı<select id="a-p"></select></label>
+  <label>Say<input type="number" id="a-q" min="1" value="1" style="width:80px"></label>
+  <label>Qiymət<span id="a-pr" style="padding:8px 0;font-weight:600">-</span></label>
+  <button class="btn" onclick="addSale()">Əlavə et</button></div></div>
+ <div class="card tw"><table><thead><tr><th>Tarix</th><th>Ətir</th><th>Say</th><th>Qiymət (₼)</th><th class="n">Cəmi</th><th></th></tr></thead><tbody id="sb"></tbody><tfoot id="sf"></tfoot></table></div>
+</section>
+<section id="s-exp">
+ <div class="card"><h2>Yeni xərc</h2><div class="add">
+  <label>Tarix<input type="date" id="x-d"></label>
+  <label>Kateqoriya<select id="x-c"></select></label>
+  <label>Təsvir<input id="x-t" placeholder="məs. aylıq icarə"></label>
+  <label>Say<input type="number" id="x-q" min="1" value="1" style="width:80px"></label>
+  <label>Vahid məbləğ (₼)<input type="number" step="0.01" id="x-a" style="width:120px"></label>
+  <button class="btn" onclick="addExp()">Əlavə et</button></div></div>
+ <div class="card tw"><table><thead><tr><th>Tarix</th><th>Kateqoriya</th><th>Təsvir</th><th>Say</th><th>Vahid məbləğ (₼)</th><th class="n">Cəmi</th><th></th></tr></thead><tbody id="eb"></tbody><tfoot id="ef"></tfoot></table></div>
+</section>
+<section id="s-dash">
+ <div class="kp" id="kp"></div>
+ <div class="card tw"><h2>Aylıq hesabat</h2><table><thead><tr><th>Ay</th><th class="n">Satış</th><th class="n">Əməliyyat</th><th class="n">Xərc</th><th class="n">Xalis mənfəət</th><th class="n">Marja</th><th class="n">Yığılmış</th></tr></thead><tbody id="mb"></tbody></table></div>
+ <div class="g2">
+  <div class="card"><h2>Ümumi gəlir və xərc (il üzrə)</h2><div class="ch"><canvas id="c5"></canvas></div></div>
+  <div class="card"><h2>Satış və xərc</h2><div class="ch"><canvas id="c1"></canvas></div></div>
+  <div class="card"><h2>Mənfəət</h2><div class="ch"><canvas id="c2"></canvas></div></div>
+  <div class="card"><h2>Ətirlər üzrə satış</h2><div class="ch"><canvas id="c3"></canvas></div></div>
+  <div class="card"><h2>Xərc kateqoriyaları</h2><div class="ch"><canvas id="c4"></canvas></div></div>
+  <div class="card"><h2>Ümumi: satış, xərc və mənfəət</h2><div class="ch"><canvas id="c5"></canvas></div></div>
+ </div>
+ <div class="card"><h2>Statistika</h2><dl id="st"></dl></div>
+</section>
+<section id="s-set">
+ <div class="g2">
+ <div class="card"><h2>Ətirlər və qiymətlər</h2><div id="pl"></div><button class="btn" onclick="addPerf()">+ Yeni ətir</button>
+  <p class="mu">Qiyməti dəyişsəniz, yalnız yeni satışlara təsir edir. Köhnə satışlar öz qiymətini saxlayır.</p></div>
+ <div class="card"><h2>Xərc kateqoriyaları</h2><p class="mu">Vergüllə ayırın:</p><textarea id="ec"></textarea>
+  <h2 style="margin-top:14px">Ehtiyat nüsxə</h2><p class="mu">Məlumatlar yalnız bu cihazın brauzerində saxlanılır. Mətni kopyalayıb saxlayın; bərpa üçün yapışdırıb düyməni basın.</p>
+  <textarea id="bk"></textarea><p><button class="btn" onclick="restore()">Mətndən bərpa et</button> <span id="bm" class="mu"></span></p></div>
+ </div>
+</section>
+</main>
+<script>
+const MON=["Yanvar","Fevral","Mart","Aprel","May","İyun","İyul","Avqust","Sentyabr","Oktyabr","Noyabr","Dekabr"],KEY="uchot_v1";
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const m=n=>(+n||0).toLocaleString("az-AZ",{minimumFractionDigits:2,maximumFractionDigits:2})+" ₼";
+const pc=n=>((+n||0)*100).toFixed(1)+"%",today=()=>new Date().toISOString().slice(0,10);
+const def=()=>({year:new Date().getFullYear(),nid:100,perf:Array.from({length:8},(_,i)=>({id:i+1,name:"Ətir "+(i+1),price:50})),sales:[],exp:[],ecats:["İcarə","Əmək haqqı","Marketinq","Kommunal","Mal alışı","Digər"]});
+let S=null;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}S=S||def();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}$("#bk").value=JSON.stringify(S)};
+const etot=x=>(x.q||1)*x.a,tot=x=>x.q*x.p,yS=()=>S.sales.filter(x=>(x.d||"").startsWith(S.year)),yE=()=>S.exp.filter(x=>(x.d||"").startsWith(S.year));
+const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+function show(id){document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id==="s-"+id));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.t===id));if(id==="dash")rDash()}
+[["sales","Satış"],["exp","Xərclər"],["dash","Hesabat və diaqramlar"],["set","Ətirlər və ayarlar"]].forEach(([k,t])=>{const b=document.createElement("button");b.textContent=t;b.dataset.t=k;b.onclick=()=>show(k);$("#nav").appendChild(b)});
+const opts=(list,sel)=>{const l=list.includes(sel)||sel==null?list:[...list,sel];return l.map(n=>`<option ${n===sel?"selected":""}>${esc(n)}</option>`).join("")};
+function upd(k,id,f,v){const o=S[k].find(x=>x.id===id);if(!o)return;o[f]=v;save();const t=$("#t"+id);if(t)t.textContent=m(k==='sales'?tot(o):etot(o));rFoot()}
+function del(k,id){S[k]=S[k].filter(x=>x.id!==id);save();rAll()}
+function chP(id,name){const o=S.sales.find(x=>x.id===id),p=S.perf.find(x=>x.name===name);o.n=name;if(p)o.p=p.price;save();rSales()}
+function addSale(){const p=S.perf.find(x=>x.name===$("#a-p").value);if(!p||!$("#a-d").value)return;S.sales.push({id:S.nid++,d:$("#a-d").value,n:p.name,q:Math.max(1,+$("#a-q").value||1),p:p.price});$("#a-q").value=1;save();rAll()}
+function addExp(){const a=+$("#x-a").value;if(!$("#x-d").value||!a)return;S.exp.push({id:S.nid++,d:$("#x-d").value,c:$("#x-c").value,t:$("#x-t").value,q:Math.max(1,+$("#x-q").value||1),a});$("#x-t").value="";$("#x-a").value="";$("#x-q").value=1;save();rAll()}
+function rSales(){
+ const names=S.perf.map(p=>p.name);$("#a-p").innerHTML=opts(names,$("#a-p").value||names[0]);prv();
+ $("#sb").innerHTML=yS().slice().reverse().map(x=>`<tr><td><input type="date" value="${x.d}" onchange="upd('sales',${x.id},'d',this.value)"></td><td><select onchange="chP(${x.id},this.value)">${opts(names,x.n)}</select></td><td><input type="number" min="1" value="${x.q}" style="width:70px" onchange="upd('sales',${x.id},'q',+this.value)"></td><td><input type="number" step="0.01" value="${x.p}" style="width:100px" onchange="upd('sales',${x.id},'p',+this.value)"></td><td class="n" id="t${x.id}">${m(tot(x))}</td><td><button class="x" aria-label="Sil" onclick="del('sales',${x.id})">✕</button></td></tr>`).join("")||'<tr><td colspan="6" class="mu">Hələ satış yoxdur. Yuxarıda tarix, ətir və say seçib «Əlavə et» basın.</td></tr>';
+ rFoot()}
+function rFoot(){const a=yS();$("#sf").innerHTML=`<tr><td colspan="2">${S.year} cəmi</td><td>${sum(a,x=>x.q)}</td><td></td><td class="n">${m(sum(a,tot))}</td><td></td></tr>`;$("#ef").innerHTML=`<tr><td colspan="3">${S.year} cəmi</td><td>${sum(yE(),x=>x.q||1)}</td><td></td><td class="n">${m(sum(yE(),etot))}</td><td></td></tr>`}
+function prv(){const p=S.perf.find(x=>x.name===$("#a-p").value);$("#a-pr").textContent=p?m(p.price):"-"}
+function rExp(){$("#x-c").innerHTML=opts(S.ecats,$("#x-c").value||S.ecats[0]);
+ $("#eb").innerHTML=yE().slice().reverse().map(x=>`<tr><td><input type="date" value="${x.d}" onchange="upd('exp',${x.id},'d',this.value)"></td><td><select onchange="upd('exp',${x.id},'c',this.value)">${opts(S.ecats,x.c)}</select></td><td><input value="${esc(x.t)}" onchange="upd('exp',${x.id},'t',this.value)"></td><td><input type="number" min="1" value="${x.q||1}" style="width:70px" onchange="upd('exp',${x.id},'q',+this.value)"></td><td><input type="number" step="0.01" value="${x.a}" style="width:120px" onchange="upd('exp',${x.id},'a',+this.value)"></td><td class="n" id="t${x.id}">${m(etot(x))}</td><td><button class="x" aria-label="Sil" onclick="del('exp',${x.id})">✕</button></td></tr>`).join("")||'<tr><td colspan="7" class="mu">Hələ xərc yoxdur.</td></tr>';rFoot()}
+function rSet(){
+ $("#pl").innerHTML=S.perf.map(p=>`<div class="pr"><input value="${esc(p.name)}" aria-label="Ad" onchange="pe(${p.id},'name',this.value)"><input type="number" step="0.01" value="${p.price}" aria-label="Qiymət" onchange="pe(${p.id},'price',+this.value)"><button class="x" aria-label="Sil" onclick="pd(${p.id})">✕</button></div>`).join("");
+ $("#ec").value=S.ecats.join(", ");$("#bk").value=JSON.stringify(S)}
+function pe(id,f,v){const p=S.perf.find(x=>x.id===id);p[f]=v;save();rSales()}
+function pd(id){S.perf=S.perf.filter(x=>x.id!==id);save();rAll()}
+function addPerf(){S.perf.push({id:S.nid++,name:"Yeni ətir",price:50});save();rAll()}
+$("#ec").onchange=e=>{const l=e.target.value.split(",").map(s=>s.trim()).filter(Boolean);if(l.length){S.ecats=l;save();rAll()}};
+function restore(){try{const o=JSON.parse($("#bk").value);if(!o.perf||!o.sales||!o.exp)throw 0;S=o;save();rAll();$("#bm").textContent="Bərpa olundu."}catch(e){$("#bm").textContent="Mətn düzgün deyil."}}
+$("#yr").onchange=e=>{S.year=+e.target.value||S.year;save();rAll()};
+$("#a-p").onchange=prv;
+let ch={};
+function mk(id,cfg){if(!window.Chart)return;ch[id]&&ch[id].destroy();const cs=getComputedStyle(document.documentElement);Chart.defaults.color=cs.getPropertyValue("--mu");Chart.defaults.borderColor=cs.getPropertyValue("--bd");cfg.options={responsive:true,maintainAspectRatio:false,...cfg.options};ch[id]=new Chart($("#"+id),cfg)}
+function rDash(){
+ const a=yS(),e=yE(),mo=MON.map(()=>({s:0,n:0,e:0}));
+ a.forEach(x=>{const k=+x.d.slice(5,7)-1;if(mo[k]){mo[k].s+=tot(x);mo[k].n++}});e.forEach(x=>{const k=+x.d.slice(5,7)-1;if(mo[k])mo[k].e+=etot(x)});
+ let cum=0;mo.forEach(r=>{r.p=r.s-r.e;cum+=r.p;r.c=cum});
+ const TS=sum(mo,r=>r.s),TE=sum(mo,r=>r.e),TP=TS-TE,N=a.length,Q=sum(a,x=>x.q);
+ const cl=v=>v<0?"neg":"pos";
+ $("#kp").innerHTML=[["Ümumi satış",m(TS),""],["Ümumi xərc",m(TE),""],["Xalis mənfəət",m(TP),cl(TP)],["Mənfəət marjası",TS?pc(TP/TS):"-",cl(TP)]].map(([l,v,c])=>`<div><small>${l}</small><b class="${c}">${v}</b></div>`).join("");
+ $("#mb").innerHTML=mo.map((r,i)=>`<tr><td>${MON[i]}</td><td class="n">${m(r.s)}</td><td class="n">${r.n}</td><td class="n">${m(r.e)}</td><td class="n ${cl(r.p)}">${m(r.p)}</td><td class="n">${r.s?pc(r.p/r.s):"-"}</td><td class="n">${m(r.c)}</td></tr>`).join("");
+ const by=(arr,key,val)=>{const o={};arr.forEach(x=>o[x[key]]=(o[x[key]]||0)+val(x));return Object.entries(o).filter(r=>r[1]>0).sort((p,q)=>q[1]-p[1])};
+ const bp=by(a,"n",tot),bq=by(a,"n",x=>x.q),bc=by(e,"c",etot);
+ const days={};a.forEach(x=>days[x.d]=(days[x.d]||0)+tot(x));const dd=Object.entries(days).sort((p,q)=>q[1]-p[1]);
+ const bm=mo.map((r,i)=>[i,r.s]).sort((p,q)=>q[1]-p[1])[0],nm=mo.filter(r=>r.s>0).length;
+ const rows=[["Əməliyyat sayı",N],["Satılan ətir sayı",Q],["Orta çek",N?m(TS/N):"-"],["Orta aylıq satış",nm?m(TS/nm):"-"],["Ən yaxşı ay",bm&&bm[1]>0?`${MON[bm[0]]} (${m(bm[1])})`:"-"],["Satış olan günlər",dd.length],["Orta günlük satış",dd.length?m(TS/dd.length):"-"],["Ən yüksək satış günü",dd.length?`${dd[0][0].split("-").reverse().join(".")} (${m(dd[0][1])})`:"-"],["Gəlir gətirən №1 ətir",bp[0]?`${bp[0][0]} (${m(bp[0][1])})`:"-"],["Ən çox satılan ətir",bq[0]?`${bq[0][0]} (${bq[0][1]} ədəd)`:"-"],["Ən böyük xərc",bc[0]?`${bc[0][0]} (${m(bc[0][1])})`:"-"]];
+ $("#st").innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("");
+ const cs=getComputedStyle(document.documentElement),ac=cs.getPropertyValue("--ac"),go=cs.getPropertyValue("--go"),pal=[ac,go,"#2e86a6","#d1604d","#6fa35b","#8a6fd1","#c9a0b5","#4a5d73"];
+ const nm0=TP<0?"Zərər":"Xalis mənfəət";
+ mk("c5",{type:"bar",data:{labels:["Gəlir (satış)","Xərc",nm0],datasets:[{data:[TS,TE,Math.abs(TP)],backgroundColor:[ac,go,TP<0?cs.getPropertyValue("--bad"):cs.getPropertyValue("--ok")],borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>m(c.raw)}}}}});
+ mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:ac},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:go}]}});
+ mk("c2",{type:"line",data:{labels:MON,datasets:[{label:"Xalis mənfəət",data:mo.map(r=>r.p),borderColor:ac,backgroundColor:ac,tension:.25},{label:"Yığılmış",data:mo.map(r=>r.c),borderColor:go,backgroundColor:go,tension:.25}]}});
+ mk("c3",{type:"doughnut",data:{labels:bp.map(r=>r[0]),datasets:[{data:bp.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
+ mk("c5",{type:"bar",data:{labels:["Satış","Xərc","Xalis mənfəət"],datasets:[{data:[TS,TE,TP],backgroundColor:[ac,go,TP<0?cs.getPropertyValue("--bad"):cs.getPropertyValue("--ok")]}]},options:{plugins:{legend:{display:false}}}});
+ mk("c4",{type:"doughnut",data:{labels:bc.map(r=>r[0]),datasets:[{data:bc.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
+}
+function rAll(){$("#yr").value=S.year;rSales();rExp();rSet();if($("#s-dash").classList.contains("on"))rDash()}
+$("#a-d").value=$("#x-d").value=today();
+rAll();show("sales");
+</script></body></html>
