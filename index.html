@@ -224,7 +224,7 @@ function rDash(){
                 callbacks: {
                     label: c => {
                         let total = TS + TE;
-                        let percent = ((c.raw / total) * 100).toFixed(1);
+                        let percent = total ? ((c.raw / total) * 100).toFixed(1) : 0;
                         return `${c.label}: ${percent}%`;
                     }
                 }
@@ -232,13 +232,23 @@ function rDash(){
         }
     }
 });
+
 mk("c4", {
     type: "doughnut",
     data: {
         labels: bc.map(r => r[0]),
         datasets: [{
             data: bc.map(r => r[1]),
-            backgroundColor: pal,
+            backgroundColor: [
+                "#c53030",
+                "#e06b6b",
+                "#b91c1c",
+                "#ef4444",
+                "#991b1b",
+                "#f87171",
+                "#7f1d1d",
+                "#dc2626"
+            ],
             borderWidth: 0
         }]
     },
