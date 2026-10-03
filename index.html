@@ -204,10 +204,10 @@ function rDash(){
  mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:okC},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:badC}]}});
  mk("c2",{type:"line",data:{labels:MON,datasets:[{label:"Xalis mənfəət",data:mo.map(r=>r.p),borderColor:ac,backgroundColor:ac,tension:.25},{label:"Yığılmış",data:mo.map(r=>r.c),borderColor:go,backgroundColor:go,tension:.25}]}});
  mk("c3",{type:"doughnut",data:{labels:bp.map(r=>r[0]),datasets:[{data:bp.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
-mk("c6", {
+ mk("c6", {
     type: "pie",
     data: {
-        labels: ["Satış", "Xərc"],
+        labels: ["Gəlir", "Xərc"],
         datasets: [{
             data: [TS, TE],
             backgroundColor: [okC, badC],
@@ -222,7 +222,11 @@ mk("c6", {
             },
             tooltip: {
                 callbacks: {
-                    label: c => `${c.label}: ${m(c.raw)}`
+                    label: c => {
+                        let total = TS + TE;
+                        let percent = ((c.raw / total) * 100).toFixed(1);
+                        return `${c.label}: ${percent}%`;
+                    }
                 }
             }
         }
