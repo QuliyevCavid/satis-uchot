@@ -204,7 +204,30 @@ function rDash(){
  mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:okC},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:badC}]}});
  mk("c2",{type:"line",data:{labels:MON,datasets:[{label:"Xalis mənfəət",data:mo.map(r=>r.p),borderColor:ac,backgroundColor:ac,tension:.25},{label:"Yığılmış",data:mo.map(r=>r.c),borderColor:go,backgroundColor:go,tension:.25}]}});
  mk("c3",{type:"doughnut",data:{labels:bp.map(r=>r[0]),datasets:[{data:bp.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
- mk("c6",{type:"pie",data:{labels:["Satış","Xərc",nm0],datasets:[{data:[TS,TE,TP],backgroundColor:[okC,badC,TP<0?badC:okC],borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>m(c.raw)}}}}});
+mk("c6", {
+    type: "pie",
+    data: {
+        labels: ["Satış", "Xərc"],
+        datasets: [{
+            data: [TS, TE],
+            backgroundColor: [okC, badC],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true,
+                position: "bottom"
+            },
+            tooltip: {
+                callbacks: {
+                    label: c => `${c.label}: ${m(c.raw)}`
+                }
+            }
+        }
+    }
+});
  mk("c4",{type:"doughnut",data:{labels:bc.map(r=>r[0]),datasets:[{data:bc.map(r=>r[1]),backgroundColor:bc.map(() => badC),borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
 }
 function rAll(){$("#yr").value=S.year;rSales();rExp();rSet();if($("#s-dash").classList.contains("on"))rDash()}
