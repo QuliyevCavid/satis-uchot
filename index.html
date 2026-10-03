@@ -108,7 +108,10 @@ textarea{width:100%;height:90px;font-size:12px}
   <label>Tarix<input type="date" id="a-d"></label>
   <label>Ətrin adı<select id="a-p"></select></label>
   <label>Say<input type="number" id="a-q" min="1" value="1" style="width:80px"></label>
-  <label>Qiymət<span id="a-pr" style="padding:8px 0;font-weight:600">-</span></label>
+  <label>
+  Qiymət
+  <input type="number" step="0.01" min="0" id="a-pr" style="width:120px">
+</label>
   <button class="btn" onclick="addSale()">Əlavə et</button></div></div>
  <div class="card tw"><table><thead><tr><th>Tarix</th><th>Ətir</th><th>Say</th><th>Qiymət (₼)</th><th class="n">Cəmi</th><th></th></tr></thead><tbody id="sb"></tbody><tfoot id="sf"></tfoot></table></div>
 </section>
@@ -161,7 +164,24 @@ const opts=(list,sel)=>{const l=list.includes(sel)||sel==null?list:[...list,sel]
 function upd(k,id,f,v){const o=S[k].find(x=>x.id===id);if(!o)return;o[f]=v;save();const t=$("#t"+id);if(t)t.textContent=m(k==='sales'?tot(o):etot(o));rFoot()}
 function del(k,id){S[k]=S[k].filter(x=>x.id!==id);save();rAll()}
 function chP(id,name){const o=S.sales.find(x=>x.id===id),p=S.perf.find(x=>x.name===name);o.n=name;if(p)o.p=p.price;save();rSales()}
-function addSale(){const p=S.perf.find(x=>x.name===$("#a-p").value);if(!p||!$("#a-d").value)return;S.sales.push({id:S.nid++,d:$("#a-d").value,n:p.name,q:Math.max(1,+$("#a-q").value||1),p:p.price});$("#a-q").value=1;save();rAll()}
+function addSale(){
+  const p = S.perf.find(x => x.name === $("#a-p").value);
+  const price = +$("#a-pr").value;
+
+  if(!p || !$("#a-d").value || !Number.isFinite(price) || price < 0) return;
+
+  S.sales.push({
+    id: S.nid++,
+    d: $("#a-d").value,
+    n: p.name,
+    q: Math.max(1, +$("#a-q").value || 1),
+    p: price
+  });
+
+  $("#a-q").value = 1;
+  save();
+  rAll();
+}
 function addExp(){const a=+$("#x-a").value;if(!$("#x-d").value||!a)return;S.exp.push({id:S.nid++,d:$("#x-d").value,c:$("#x-c").value,t:$("#x-t").value,q:Math.max(1,+$("#x-q").value||1),a});$("#x-t").value="";$("#x-a").value="";$("#x-q").value=1;save();rAll()}
 function rSales(){
  const names=S.perf.map(p=>p.name);$("#a-p").innerHTML=opts(names,$("#a-p").value||names[0]);prv();
