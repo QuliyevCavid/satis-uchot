@@ -78,7 +78,7 @@ textarea{width:100%;height:90px;font-size:12px}
   <div class="card"><h2>Mənfəət</h2><div class="ch"><canvas id="c2"></canvas></div></div>
   <div class="card"><h2>Ətirlər üzrə satış</h2><div class="ch"><canvas id="c3"></canvas></div></div>
   <div class="card"><h2>Xərc kateqoriyaları</h2><div class="ch"><canvas id="c4"></canvas></div></div>
-  <div class="card"><h2>Ümumi: satış, xərc və mənfəət</h2><div class="ch"><canvas id="c5"></canvas></div></div>
+  <div class="card"><h2>Ümumi: satış, xərc və mənfəət</h2><div class="ch"><canvas id="c6"></canvas></div></div>
  </div>
  <div class="card"><h2>Statistika</h2><dl id="st"></dl></div>
 </section>
@@ -146,11 +146,12 @@ function rDash(){
  $("#st").innerHTML=rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join("");
  const cs=getComputedStyle(document.documentElement),ac=cs.getPropertyValue("--ac"),go=cs.getPropertyValue("--go"),pal=[ac,go,"#2e86a6","#d1604d","#6fa35b","#8a6fd1","#c9a0b5","#4a5d73"];
  const nm0=TP<0?"Zərər":"Xalis mənfəət";
- mk("c5",{type:"bar",data:{labels:["Gəlir (satış)","Xərc",nm0],datasets:[{data:[TS,TE,Math.abs(TP)],backgroundColor:[ac,go,TP<0?cs.getPropertyValue("--bad"):cs.getPropertyValue("--ok")],borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>m(c.raw)}}}}});
- mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:ac},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:go}]}});
+ const okC=cs.getPropertyValue("--ok").trim(),badC=cs.getPropertyValue("--bad").trim();
+ mk("c5",{type:"bar",data:{labels:["Gəlir (satış)","Xərc",nm0],datasets:[{data:[TS,TE,Math.abs(TP)],backgroundColor:[okC,badC,TP<0?badC:okC],borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>m(c.raw)}}}}});
+ mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:okC},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:badC}]}});
  mk("c2",{type:"line",data:{labels:MON,datasets:[{label:"Xalis mənfəət",data:mo.map(r=>r.p),borderColor:ac,backgroundColor:ac,tension:.25},{label:"Yığılmış",data:mo.map(r=>r.c),borderColor:go,backgroundColor:go,tension:.25}]}});
  mk("c3",{type:"doughnut",data:{labels:bp.map(r=>r[0]),datasets:[{data:bp.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
- mk("c5",{type:"bar",data:{labels:["Satış","Xərc","Xalis mənfəət"],datasets:[{data:[TS,TE,TP],backgroundColor:[ac,go,TP<0?cs.getPropertyValue("--bad"):cs.getPropertyValue("--ok")]}]},options:{plugins:{legend:{display:false}}}});
+ mk("c6",{type:"bar",data:{labels:["Satış","Xərc",nm0],datasets:[{data:[TS,TE,TP],backgroundColor:[okC,badC,TP<0?badC:okC],borderRadius:6}]},options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>m(c.raw)}}}}});
  mk("c4",{type:"doughnut",data:{labels:bc.map(r=>r[0]),datasets:[{data:bc.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
 }
 function rAll(){$("#yr").value=S.year;rSales();rExp();rSet();if($("#s-dash").classList.contains("on"))rDash()}
