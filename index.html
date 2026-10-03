@@ -204,17 +204,21 @@ function rDash(){
  mk("c1",{type:"bar",data:{labels:MON,datasets:[{label:"Satış",data:mo.map(r=>r.s),backgroundColor:okC},{label:"Xərc",data:mo.map(r=>r.e),backgroundColor:badC}]}});
  mk("c2",{type:"line",data:{labels:MON,datasets:[{label:"Xalis mənfəət",data:mo.map(r=>r.p),borderColor:ac,backgroundColor:ac,tension:.25},{label:"Yığılmış",data:mo.map(r=>r.c),borderColor:go,backgroundColor:go,tension:.25}]}});
  mk("c3",{type:"doughnut",data:{labels:bp.map(r=>r[0]),datasets:[{data:bp.map(r=>r[1]),backgroundColor:pal,borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
- mk("c6", {
+mk("c6", {
     type: "pie",
     data: {
         labels: ["Gəlir", "Xərc"],
         datasets: [{
-            data: [TS, TE],
+            data: [
+                Number(TS) || 0,
+                Number(TE) || 0
+            ],
             backgroundColor: [okC, badC],
             borderWidth: 0
         }]
     },
     options: {
+        responsive: true,
         plugins: {
             legend: {
                 display: true,
@@ -222,22 +226,41 @@ function rDash(){
             },
             tooltip: {
                 callbacks: {
-                    label: c => {
-                        let total = TS + TE;
-                        let percent = total ? ((c.raw / total) * 100).toFixed(1) : 0;
-                        return `${c.label}: ${percent}%`;
+                    label: function(c) {
+                        const total =
+                            (Number(TS) || 0) +
+                            (Number(TE) || 0);
+
+                        const value = Number(c.raw) || 0;
+
+                        const percent = total
+                            ? ((value / total) * 100).toFixed(1)
+                            : "0.0";
+
+                        return c.label + ": " + percent + "%";
                     }
                 }
             }
         }
     }
 });
+
 mk("c4", {
     type: "doughnut",
     data: {
-        labels: bc.map(r => r[0]),
+        labels: Array.isArray(bc)
+            ? bc.map(function(r) {
+                return r[0];
+            })
+            : [],
+
         datasets: [{
-            data: bc.map(r => r[1]),
+            data: Array.isArray(bc)
+                ? bc.map(function(r) {
+                    return Number(r[1]) || 0;
+                })
+                : [],
+
             backgroundColor: [
                 "#c53030",
                 "#e06b6b",
@@ -248,19 +271,42 @@ mk("c4", {
                 "#7f1d1d",
                 "#dc2626"
             ],
+
             borderWidth: 0
         }]
     },
+
     options: {
+        responsive: true,
+
         plugins: {
             legend: {
+                display: true,
                 position: "right"
             }
         }
     }
 });
-} 
-function rAll(){$("#yr").value=S.year;rSales();rExp();rSet();if($("#s-dash").classList.contains("on"))rDash()}
-$("#a-d").value=$("#x-d").value=today();
-rAll();show("sales");
-</script></body></html>
+
+}
+
+function rAll() {
+    $("#yr").value = S.year;
+
+    rSales();
+    rExp();
+    rSet();
+
+    if ($("#s-dash").classList.contains("on")) {
+        rDash();
+    }
+}
+
+$("#a-d").value = $("#x-d").value = today();
+
+rAll();
+show("sales");
+
+</script>
+</body>
+</html>
