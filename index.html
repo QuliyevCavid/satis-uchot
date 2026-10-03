@@ -232,8 +232,24 @@ function rDash(){
         }
     }
 });
- mk("c4",{type:"doughnut",data:{labels:bc.map(r=>r[0]),datasets:[{data:bc.map(r=>r[1]),backgroundColor:bc.map(() => badC),borderWidth:0}]},options:{plugins:{legend:{position:"right"}}}});
-}
+ mk("c4", {
+    type: "doughnut",
+    data: {
+        labels: bc.map(r => r[0]),
+        datasets: [{
+            data: bc.map(r => r[1]),
+            backgroundColor: pal,
+            borderWidth: 0
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                position: "right"
+            }
+        }
+    }
+});
 function rAll(){$("#yr").value=S.year;rSales();rExp();rSet();if($("#s-dash").classList.contains("on"))rDash()}
 $("#a-d").value=$("#x-d").value=today();
 rAll();show("sales");
